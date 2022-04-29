@@ -2,12 +2,13 @@ package com.backend.trainerbooks.controllers;
 
 import com.backend.trainerbooks.DTOS.TraineeDTO;
 import com.backend.trainerbooks.DTOS.TrainerDTO;
-import com.backend.trainerbooks.annotations.SecureEndPoint;
+import com.backend.trainerbooks.annotations.SecuredEndPoint;
 import com.backend.trainerbooks.entitys.AccountDAO;
 import com.backend.trainerbooks.entitys.TraineeDAO;
 import com.backend.trainerbooks.entitys.TrainerDAO;
 import com.backend.trainerbooks.entitys.UserDAO;
 import com.backend.trainerbooks.jwt.JWTUtils;
+import com.backend.trainerbooks.mappers.IMapDAOToDTOAccounts;
 import com.backend.trainerbooks.mappers.IMapDTOToDAOAccounts;
 import com.backend.trainerbooks.services.AccountService;
 import com.backend.trainerbooks.services.TraineeAccountService;
@@ -16,6 +17,7 @@ import com.backend.trainerbooks.services.UserService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,12 +26,13 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.backend.trainerbooks.enums.JWTEnum.AUTHORIZATION;
 
 @RestController
-@RequestMapping("/secure")
+@RequestMapping("/accounts")
 @RequiredArgsConstructor
 @CrossOrigin(origins ="http://localhost:3000")
 public class AccountControllers {
@@ -40,7 +43,9 @@ public class AccountControllers {
     private final UserService userService;
     private final IMapDTOToDAOAccounts mapDTOToDAOAccounts;
     private final AccountService accountService;
+    private final IMapDAOToDTOAccounts mapDAOToDTOAccounts;
 
+    @SecuredEndPoint
     @PostMapping("/create-trainer-account")
     public TrainerDAO createAccountForTrainer(HttpServletRequest request,@RequestBody TrainerDTO trainerDTO) {
         Long userId = jwtUtils.getIdFromToken(request.getHeader(AUTHORIZATION.getValue()));
@@ -58,7 +63,7 @@ public class AccountControllers {
         return trainerDAO;
     }
 
-    @SecureEndPoint
+    @SecuredEndPoint
     @PostMapping("/create-trainee-account")
     public TraineeDAO secureCreateAccountForTrainee(HttpServletRequest request,@Valid @RequestBody TraineeDTO traineeDTO) {
         Long userId = jwtUtils.getIdFromToken(request.getHeader(AUTHORIZATION.getValue()));
@@ -75,5 +80,22 @@ public class AccountControllers {
         }
 
         return traineeDAO;
+    }
+
+
+    @SecuredEndPoint
+    @GetMapping("/get-trainee-accounts")
+    public List<TraineeDTO> getTraineeAccounts(HttpServletRequest request){
+        Long userId = jwtUtils.getIdFromToken(request.getHeader(AUTHORIZATION.getValue()));
+        List<TraineeDAO> traineeDAOS = traineeAccountService.findAllTraineeAccountsByUserId(userId);
+        return mapDAOToDTOAccounts.traineeDTOtoDAO(traineeDAOS);
+    }
+
+    @SecuredEndPoint
+    @GetMapping("/get-trainer-accounts")
+    public List<TrainerDTO> getTrainerAccounts(HttpServletRequest request){
+        Long userId = jwtUtils.getIdFromToken(request.getHeader(AUTHORIZATION.getValue()));
+        List<TrainerDAO> trainerDAOS =  trainerAccountService.findAllTrainerAccountsByUserId(userId);
+        return mapDAOToDTOAccounts.map(trainerDAOS);
     }
 }

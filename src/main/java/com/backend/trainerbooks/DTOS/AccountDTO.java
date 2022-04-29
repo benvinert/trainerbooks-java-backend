@@ -12,6 +12,8 @@ public class AccountDTO {
 
     protected Long id;
     private String description;
+    private String category;
+    private Long rank;
 
 //    private String location;
 //    private ZonedDateTime dateOfBirthday;

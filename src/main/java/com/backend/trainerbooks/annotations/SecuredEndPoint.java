@@ -10,6 +10,6 @@ import java.lang.annotation.Target;
 @Component
 @Target(value = {ElementType.METHOD, ElementType.TYPE})
 @Retention(value = RetentionPolicy.RUNTIME)
-public @interface SecureEndPoint {
+public @interface SecuredEndPoint {
 
 }

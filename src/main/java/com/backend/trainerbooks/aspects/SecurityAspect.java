@@ -23,7 +23,7 @@ public class SecurityAspect {
 
     private final JWTUtils jwtUtils;
 
-    @Before(value = "@within(com.backend.trainerbooks.annotations.SecureEndPoint) || @annotation(com.backend.trainerbooks.annotations.SecureEndPoint))")
+    @Before(value = "@within(com.backend.trainerbooks.annotations.SecuredEndPoint) || @annotation(com.backend.trainerbooks.annotations.SecuredEndPoint))")
     public void validateToken(JoinPoint joinPoint) {
         Object[] signatureArgs = joinPoint.getArgs();
         HttpServletRequest request = (HttpServletRequest) signatureArgs[0];

@@ -24,6 +24,8 @@ public class AccountDAO {
     private Long id;
     private ZonedDateTime createdDate;
     private String description;
+    private String category;
+    private Long rank;
 
     @ManyToOne
     private UserDAO userDAO;

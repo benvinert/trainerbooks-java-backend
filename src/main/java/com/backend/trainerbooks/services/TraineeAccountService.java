@@ -3,8 +3,9 @@ package com.backend.trainerbooks.services;
 import com.backend.trainerbooks.entitys.TraineeDAO;
 import com.backend.trainerbooks.repositorys.TraineeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -15,5 +16,9 @@ public class TraineeAccountService {
 
     public TraineeDAO save(TraineeDAO traineeDAO){
         return traineeRepository.save(traineeDAO);
+    }
+
+    public List<TraineeDAO> findAllTraineeAccountsByUserId(Long userId) {
+        return traineeRepository.findAllByAccountDAO_UserDAO_Id(userId);
     }
 }
