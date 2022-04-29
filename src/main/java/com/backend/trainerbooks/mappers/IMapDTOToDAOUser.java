@@ -20,8 +20,10 @@ public interface IMapDTOToDAOUser {
     @Mapping(target = "username" , expression = "java(trimSpaces(userDTO.getUsername()))")
     UserDAO map(UserDTO userDTO);
 
+    @Mapping(target = "id",ignore = true)
     @Mapping(target = "createdDate", expression = "java(ZonedDateTime.now())")
     @Mapping(target = "isActive" , defaultValue = "true")
+    @Mapping(source = "password",target = "password", qualifiedByName = "passwordEncoder")
     @Mapping(target = "roles" , expression = "java(getUserRole())")
     @Mapping(target = "username" , source = "name")
     UserDAO map(UserOAuthDTO userOAuthDTO);

@@ -1,5 +1,6 @@
 package com.backend.trainerbooks.DTOS;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @Data
 public class UserDTO {
-
+    @JsonIgnore
     private Long id;
     @Size(min = 3 , max = 15, message = "username should be minimum with 3 characters and not greater than 15")
     private String username;

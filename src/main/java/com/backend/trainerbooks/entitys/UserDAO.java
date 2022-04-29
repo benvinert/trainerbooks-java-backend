@@ -31,4 +31,5 @@ public class UserDAO {
     private Boolean isActive;
     private ZonedDateTime createdDate;
     private String roles;//ROLE_USER,ROLE_ADMIN
+    private String city;
 }

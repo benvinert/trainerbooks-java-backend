@@ -15,7 +15,7 @@ public class AccountDTO {
 
 //    private String location;
 //    private ZonedDateTime dateOfBirthday;
-//    private ZonedDateTime createdDate;
+    private ZonedDateTime createdDate;
 
 
 }

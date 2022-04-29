@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +33,7 @@ import static com.backend.trainerbooks.enums.JWTEnum.AUTHORIZATION;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins ="http://localhost:3000")
 public class UserControllers {
 
     private final UserService userService;
@@ -67,8 +69,7 @@ public class UserControllers {
     @GetMapping("/secure/getAllUsers")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Collection<UserDAO> getUsers(HttpServletRequest request, HttpServletResponse response) {
-        String username = jwtUtils.getUsernameFromToken(request.getHeader(AUTHORIZATION.getValue()));//if java can authenticate user with jwt
-        //So we need to try authenticate if it's OAuth.
+        String username = jwtUtils.getUsernameFromToken(request.getHeader(AUTHORIZATION.getValue()));
         return userService.findAllUsers();
     }
 
