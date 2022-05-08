@@ -1,7 +1,6 @@
 package com.backend.trainerbooks.jwt;
 
 import com.backend.trainerbooks.entitys.UserDAO;
-import com.backend.trainerbooks.services.GroupUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -21,7 +20,7 @@ import static com.backend.trainerbooks.enums.JWTEnum.BEARER;
 public class JWTUtils implements Serializable {
     private static final long serialVersionUID = 234234523523L;
 
-    public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+    public static final long JWT_TOKEN_VALIDITY =   30 * 24 * 60 * 60;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -65,17 +64,10 @@ public class JWTUtils implements Serializable {
         return expiration.before(new Date());
     }
 
-
-    //generate token for user
-    public String generateToken(GroupUserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        return doGenerateToken(claims, userDetails.getUsername() + "," + userDetails.getId());
-    }
-
     //generate token for user
     public String generateToken(UserDAO userDAO) {
         Map<String, Object> claims = new HashMap<>();
-        return doGenerateToken(claims, userDAO.getUsername() + "," + userDAO.getId());
+        return doGenerateToken(claims, userDAO.getEmail() + "," + userDAO.getId());
     }
 
 

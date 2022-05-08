@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.time.ZonedDateTime;
 
 @AllArgsConstructor
@@ -16,9 +15,13 @@ import java.time.ZonedDateTime;
 public class UserDTO {
     @JsonIgnore
     private Long id;
-    @Size(min = 3 , max = 15, message = "username should be minimum with 3 characters and not greater than 15")
-    private String username;
     private String password;
+    private String firstName;
+    private String lastName;
+    private String gender;
+    private String country;
+    private String city;
+    private ZonedDateTime birthdate;
 
     @Email
     @NotBlank

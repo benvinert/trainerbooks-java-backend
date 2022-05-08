@@ -14,10 +14,6 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public Optional<UserDAO> findByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
     public List<UserDAO> findAllUsers() {
         return userRepository.findAll();
     }
@@ -32,6 +28,10 @@ public class UserService {
 
     public Optional<UserDAO> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    public void activateUserByUserId(Long userId) {
+        userRepository.activateUserByUserId(userId);
     }
 
 

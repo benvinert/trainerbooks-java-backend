@@ -15,6 +15,11 @@ public class TrainerDAO {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
+    private String whoIs;
+    private String education;
+    private String aboutProcess;
+    private String moreAbout;
+    private String city;
 
     @ManyToOne
     private AccountDAO accountDAO;

@@ -2,52 +2,64 @@ package com.backend.trainerbooks.controllers;
 
 import com.backend.trainerbooks.DTOS.UserDTO;
 import com.backend.trainerbooks.DTOS.UserOAuthDTO;
-import com.backend.trainerbooks.jwt.JWTUtils;
-import com.backend.trainerbooks.jwt.JwtResponse;
+import com.backend.trainerbooks.Responses.LoginResponse;
 import com.backend.trainerbooks.entitys.UserDAO;
+import com.backend.trainerbooks.jwt.JWTUtils;
+import com.backend.trainerbooks.jwt.JwtRequest;
+import com.backend.trainerbooks.mappers.IMapDAOToDAOUser;
 import com.backend.trainerbooks.mappers.IMapDTOToDAOUser;
-import com.backend.trainerbooks.services.GroupUserDetails;
-import com.backend.trainerbooks.services.GroupUserDetailsService;
 import com.backend.trainerbooks.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.Collection;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 
-import static com.backend.trainerbooks.enums.JWTEnum.AUTHORIZATION;
-
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins ="http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserControllers {
-
+    Logger logger = LoggerFactory.getLogger(UserControllers.class);
     private final UserService userService;
     private final IMapDTOToDAOUser mapDTOToDAOUser;
     private final AuthenticationManager authenticationManager;
-    private final GroupUserDetailsService groupUserDetailsService;
+    private final IMapDAOToDAOUser mapDAOToDAOUser;
     private final JWTUtils jwtUtils;
+    private final BCryptPasswordEncoder passwordEncoder;
 
 
     @PostMapping("/saveUser")
-    public String saveUser(@Valid @RequestBody UserDTO userDTO) {
+    public Map<String, String> saveUser(@Valid @RequestBody UserDTO userDTO) {
         UserDAO userDAO = mapDTOToDAOUser.map(userDTO);
-        userService.save(userDAO);
-        return "User saved successfully";
+        Map<String, String> responseMap = new HashMap<>();
+        try {
+            userService.save(userDAO);
+            responseMap.put("hashLink", Base64.getEncoder().encodeToString(userDAO.getId().toString().getBytes()));
+        } catch (Exception e) {
+            logger.error(String.format("User email with : %s  , ALREADY EXISTS", userDTO.getEmail()), e);
+            responseMap.put("emailAlreadyExists", "User Email already exists");
+        }
+        return responseMap;
+    }
+
+    @GetMapping("/activate/user/{useridBase64}")
+    public Map<String, Boolean> activateUser(@PathVariable String useridBase64) {
+        Long userid = Long.valueOf(new String(Base64.getDecoder().decode(useridBase64)));
+        userService.activateUserByUserId(userid);
+        return Map.of("Success", true);
     }
 
     @PostMapping("/oauth/authenticate")
@@ -66,29 +78,41 @@ public class UserControllers {
         return responseMap;
     }
 
-    @GetMapping("/secure/getAllUsers")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public Collection<UserDAO> getUsers(HttpServletRequest request, HttpServletResponse response) {
-        String username = jwtUtils.getUsernameFromToken(request.getHeader(AUTHORIZATION.getValue()));
-        return userService.findAllUsers();
+    @PostMapping("/signin")
+    public LoginResponse login(@RequestBody UserDTO userDTO) {
+        Optional<UserDAO> userDAO = null;
+        String errorMessage = "";
+        String jwtToken = null;
+        boolean error = false;
+        try {
+            userDAO = userService.findByEmail(userDTO.getEmail());
+
+            if (userDAO.isPresent()) {
+                if (!passwordEncoder.matches(userDTO.getPassword(), userDAO.get().getPassword())) {
+                    throw new Exception("Password incorrect");
+                }
+                jwtToken = jwtUtils.generateToken(userDAO.get());
+            } else {
+                throw new Exception("Email incorrect");
+            }
+        } catch (Exception e) {
+            logger.warn(String.format("Invalid Credentials , Userid :  %s , email : %s", userDTO.getId(), userDTO.getEmail()));
+            errorMessage = e.getMessage();
+            error = true;
+        }
+        return new LoginResponse(error, jwtToken, errorMessage);
     }
 
-
-    //       "username" : "benoo",
-//       "password" : "123"
-    @PostMapping("/login")
-    //@PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-    public JwtResponse login(@RequestBody UserDAO userEntity) throws Exception {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    userEntity.getUsername(),
-                    userEntity.getPassword()
-            ));
-        } catch (BadCredentialsException e) {
-            throw new Exception("Invalid credentials");
+    @PostMapping("/get-user-by-token")
+    public UserDTO getUserByToken(@RequestBody JwtRequest jwtToken) {
+        UserDTO userDTO = null;
+        if (Boolean.FALSE.equals(jwtUtils.isTokenExpired(jwtToken.getJwtToken()))) {
+            Long userId = jwtUtils.getIdFromToken(jwtToken.getJwtToken());
+            Optional<UserDAO> userDAO = userService.findById(userId);
+            if (userDAO.isPresent()) {
+                userDTO = mapDAOToDAOUser.map(userDAO.get());
+            }
         }
-        final GroupUserDetails userDetails = groupUserDetailsService.loadUserByUsername(userEntity.getUsername());
-        final String token = jwtUtils.generateToken(userDetails);
-        return new JwtResponse(token);
+        return userDTO;
     }
 }

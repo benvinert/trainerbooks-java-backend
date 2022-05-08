@@ -23,9 +23,12 @@ public class UserDAO {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 15)
-    private String username;
     private String password;
+    private String firstName;
+    private String lastName;
+    private String gender;
+    private String country;
+    private ZonedDateTime birthdate;
 
     private String email;
     private Boolean isActive;
