@@ -4,12 +4,18 @@ import com.backend.trainerbooks.entitys.UserDAO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.QueryHint;
 import java.util.Optional;
 
+import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
+
 public interface UserRepository extends JpaRepository<UserDAO,Integer> {
+
+    @QueryHints(@QueryHint(name=HINT_CACHEABLE ,value="true"))
     Optional<UserDAO> findById(Long id);
     Optional<UserDAO> findByEmail(String email);
 

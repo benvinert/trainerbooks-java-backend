@@ -11,12 +11,9 @@ import java.time.ZonedDateTime;
 public class AccountDTO {
 
     protected Long id;
-    private String description;
     private String category;
-    private Long rank;
-
-//    private String location;
-//    private ZonedDateTime dateOfBirthday;
+    private Long rankAccount;
+    private String profileImage;
     private ZonedDateTime createdDate;
 
 

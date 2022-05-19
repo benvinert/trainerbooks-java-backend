@@ -13,7 +13,6 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @Data
 public class UserDTO {
-    @JsonIgnore
     private Long id;
     private String password;
     private String firstName;
@@ -22,6 +21,7 @@ public class UserDTO {
     private String country;
     private String city;
     private ZonedDateTime birthdate;
+    private boolean loggedIn;
 
     @Email
     @NotBlank

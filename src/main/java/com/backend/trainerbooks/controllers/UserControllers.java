@@ -12,6 +12,7 @@ import com.backend.trainerbooks.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Base64;
 import java.util.HashMap;
@@ -104,14 +106,17 @@ public class UserControllers {
     }
 
     @PostMapping("/get-user-by-token")
-    public UserDTO getUserByToken(@RequestBody JwtRequest jwtToken) {
-        UserDTO userDTO = null;
-        if (Boolean.FALSE.equals(jwtUtils.isTokenExpired(jwtToken.getJwtToken()))) {
+    public UserDTO getUserByToken(HttpServletResponse response, @RequestBody JwtRequest jwtToken) {
+        UserDTO userDTO = new UserDTO();
+        if (jwtToken.getJwtToken() != null && Boolean.FALSE.equals(jwtUtils.isTokenExpired(jwtToken.getJwtToken()))) {
             Long userId = jwtUtils.getIdFromToken(jwtToken.getJwtToken());
             Optional<UserDAO> userDAO = userService.findById(userId);
             if (userDAO.isPresent()) {
                 userDTO = mapDAOToDAOUser.map(userDAO.get());
+                userDTO.setLoggedIn(true);
             }
+        } else {
+            userDTO.setLoggedIn(false);
         }
         return userDTO;
     }

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,5 +21,9 @@ public class TraineeAccountService {
 
     public List<TraineeDAO> findAllTraineeAccountsByUserId(Long userId) {
         return traineeRepository.findAllByAccountDAO_UserDAO_Id(userId);
+    }
+
+    public Optional<TraineeDAO> findByTraineeId(Long traineeId) {
+        return traineeRepository.findById(traineeId);
     }
 }

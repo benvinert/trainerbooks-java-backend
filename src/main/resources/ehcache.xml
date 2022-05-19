@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="ehcache.xsd" updateCheck="true"
+         monitoring="autodetect" dynamicConfig="true">
+
+    <defaultCache eternal="false" timeToLiveSeconds="30"
+                  memoryStoreEvictionPolicy="LRU" statistics="true" maxElementsInMemory="10000"
+                  overflowToDisk="false" />
+
+    <cache name="users" maxEntriesLocalHeap="10000" eternal="false"
+           timeToIdleSeconds="60" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU"
+           statistics="true">
+    </cache>
+    <cache name="accounts" maxEntriesLocalHeap="10000" eternal="false"
+           timeToIdleSeconds="60" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU"
+           statistics="true">
+    </cache>
+    <cache name="trainers" maxEntriesLocalHeap="10000" eternal="false"
+           timeToIdleSeconds="60" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU"
+           statistics="true">
+    </cache>
+    <cache name="trainees" maxEntriesLocalHeap="10000" eternal="false"
+           timeToIdleSeconds="60" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU"
+           statistics="true">
+    </cache>
+
+</ehcache>

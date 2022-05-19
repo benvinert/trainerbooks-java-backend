@@ -17,17 +17,7 @@ public interface IMapDTOToDAOAccounts {
     TraineeDAO map(TraineeDTO traineeDTO);
 
     @Mapping(target = "createdDate", expression = "java(ZonedDateTime.now())")
-    @Mapping(target = "description", expression = "java(checkDescription(trainerDTO))")
     AccountDAO trainerDTOToAccountDAO (TrainerDTO trainerDTO);
     @Mapping(target = "createdDate", expression = "java(ZonedDateTime.now())")
     AccountDAO traineeDTOToAccountDAO (TraineeDTO traineeDTO);
-
-    default String checkDescription(TrainerDTO trainerDTO) {
-        boolean isBlank = trainerDTO.getDescription().isBlank();
-        return isBlank ? "Empty Description" : trainerDTO.getDescription();
-    }
-
-
-
-
 }

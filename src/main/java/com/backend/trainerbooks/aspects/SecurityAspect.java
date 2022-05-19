@@ -1,11 +1,14 @@
 package com.backend.trainerbooks.aspects;
 
+import com.backend.trainerbooks.controllers.UserControllers;
 import com.backend.trainerbooks.jwt.JWTUtils;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +23,7 @@ import static com.backend.trainerbooks.enums.JWTEnum.AUTHORIZATION;
 @Component
 @RequiredArgsConstructor
 public class SecurityAspect {
+    Logger logger = LoggerFactory.getLogger(SecurityAspect.class);
 
     private final JWTUtils jwtUtils;
 
@@ -27,15 +31,14 @@ public class SecurityAspect {
     public void validateToken(JoinPoint joinPoint) {
         Object[] signatureArgs = joinPoint.getArgs();
         HttpServletRequest request = (HttpServletRequest) signatureArgs[0];
-        try{
-            String userJwtToken = request.getHeader(AUTHORIZATION.getValue());
+        String userJwtToken = null;
+
+            userJwtToken = request.getHeader(AUTHORIZATION.getValue());
             Objects.requireNonNull(jwtUtils.getIdFromToken(userJwtToken));
             Boolean isExpired = jwtUtils.isTokenExpired(userJwtToken);
             if(Boolean.TRUE.equals(isExpired)) {
+                logger.info("Exception in validateToken token not valid : "  + userJwtToken );
                 throw new JwtException("Token is expired!");
             }
-        }catch (Exception e) {
-            e.getMessage();
-        }
     }
 }

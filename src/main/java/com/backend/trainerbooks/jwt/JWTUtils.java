@@ -32,9 +32,7 @@ public class JWTUtils implements Serializable {
      * @return
      */
     private String getUsernameOrIdFromToken(String token,int indexIdOrUsername) {
-        if(token.startsWith(BEARER.getValue())) {
-            token = token.substring(BEARER.getValue().length());
-        }
+        token = cutBearer(token);
         String payload = getClaimFromToken(token, Claims::getSubject);
         String[] payloadList = payload.split(",");//Payload Example : [benoo,5] benoo is username , 5 is id.
         return payloadList[indexIdOrUsername];
@@ -57,9 +55,17 @@ public class JWTUtils implements Serializable {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
     }
 
+    private String cutBearer(String token) {
+        if(token.startsWith(BEARER.getValue())) {
+            token = token.substring(BEARER.getValue().length());
+        }
+        return token;
+    }
+
 
     //check if the token has expired
     public Boolean isTokenExpired(String token) {
+        token = cutBearer(token);
         final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(new Date());
     }

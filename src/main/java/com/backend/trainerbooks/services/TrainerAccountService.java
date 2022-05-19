@@ -18,7 +18,23 @@ public class TrainerAccountService {
         return trainerRepository.save(trainerDAO);
     }
 
+    public List<TrainerDAO> saveAll(List<TrainerDAO> trainerDAOs) {
+        return trainerRepository.saveAll(trainerDAOs);
+    }
+
     public List<TrainerDAO> findAllTrainerAccountsByUserId(Long userId) {
-        return trainerRepository.findAllByAccountDAO_Id(userId);
+        return trainerRepository.findAllByAccountDAO_UserDAO_Id(userId);
+    }
+
+    public List<TrainerDAO> findAll() {
+        return trainerRepository.findAll();
+    }
+
+    public List<TrainerDAO> findAllTrainerAccountsByRank() {
+        return trainerRepository.findAllByOrderByRankAccountAsc();
+    }
+
+    public TrainerDAO findTrainerAccountByTrainerId(Long accountId) {
+        return trainerRepository.findTrainerDAOById(accountId);
     }
 }
