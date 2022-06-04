@@ -12,12 +12,10 @@ public class AccountsSchedulers {
 
     private final NativeQueryService nativeQueryService;
 
-
-    @Scheduled(cron="@hourly")
+    @Scheduled(cron="0 0/2 * * * ?")
     public void updateRanks() {
         logger.info("Start Ranking Trainers");
         nativeQueryService.updateTrainerRanks();
         logger.info("Done Ranking Trainers");
-
     }
 }

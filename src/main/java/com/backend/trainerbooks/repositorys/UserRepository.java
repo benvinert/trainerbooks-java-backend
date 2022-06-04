@@ -15,7 +15,6 @@ import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
 
 public interface UserRepository extends JpaRepository<UserDAO,Integer> {
 
-    @QueryHints(@QueryHint(name=HINT_CACHEABLE ,value="true"))
     Optional<UserDAO> findById(Long id);
     Optional<UserDAO> findByEmail(String email);
 

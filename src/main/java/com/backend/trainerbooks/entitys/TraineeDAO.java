@@ -13,9 +13,10 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_ONLY;
+import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 @Data
-@Cache(region = "trainees", usage = READ_ONLY)
+@Cache(region = "trainees", usage = READ_WRITE)
 @Cacheable
 @Entity(name = "trainees")
 public class TraineeDAO {
@@ -35,10 +36,10 @@ public class TraineeDAO {
     private Long rankAccount;
 
     @OneToOne
-    @Cache(usage= CacheConcurrencyStrategy.READ_ONLY, region = "trainers" )
+    @Cache(usage= READ_WRITE, region = "trainers" )
     private TrainerDAO trainerDAO;
 
     @OneToOne
-    @Cache(usage= CacheConcurrencyStrategy.READ_ONLY, region = "accounts" )
+    @Cache(usage= READ_WRITE, region = "accounts" )
     private AccountDAO accountDAO;
 }

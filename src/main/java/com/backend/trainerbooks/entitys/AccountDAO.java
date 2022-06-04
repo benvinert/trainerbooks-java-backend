@@ -18,13 +18,14 @@ import javax.persistence.ManyToOne;
 import java.time.ZonedDateTime;
 
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_ONLY;
+import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 
 @Data
 @Entity(name = "accounts")
 @AllArgsConstructor
 @NoArgsConstructor
-@Cache(region = "accounts", usage = READ_ONLY)
+@Cache(region = "accounts", usage = READ_WRITE)
 @Cacheable
 @Builder
 public class AccountDAO {
@@ -36,7 +37,7 @@ public class AccountDAO {
     private Long rankAccount;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch= FetchType.LAZY)
-    @Cache(usage= CacheConcurrencyStrategy.READ_ONLY, region = "users" )
+    @Cache(usage= READ_WRITE, region = "users" )
     private UserDAO userDAO;
 
     //isActive

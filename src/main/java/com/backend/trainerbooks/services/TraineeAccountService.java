@@ -26,4 +26,8 @@ public class TraineeAccountService {
     public Optional<TraineeDAO> findByTraineeId(Long traineeId) {
         return traineeRepository.findById(traineeId);
     }
+
+    public Optional<TraineeDAO> findByUserAndCategory(Long userId,String category) {
+        return Optional.ofNullable(traineeRepository.findFirstByAccountDAO_UserDAO_IdAndAccountDAO_Category(userId, category));
+    }
 }

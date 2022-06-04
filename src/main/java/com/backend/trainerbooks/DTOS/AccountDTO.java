@@ -15,6 +15,7 @@ public class AccountDTO {
     private Long rankAccount;
     private String profileImage;
     private ZonedDateTime createdDate;
+    private Long UserId;
 
 
 }

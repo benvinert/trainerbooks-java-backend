@@ -15,10 +15,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.util.List;
 
-import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_ONLY;
+import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 @Data
-@Cache(region = "trainers", usage = READ_ONLY)
+@Cache(region = "trainers", usage = READ_WRITE)
 @Cacheable
 @Entity(name = "trainers")
 public class TrainerDAO {
@@ -40,11 +40,11 @@ public class TrainerDAO {
     private Long clientsAmount;
 
     @OneToMany(cascade = CascadeType.ALL, fetch= FetchType.LAZY)
-    @Cache(usage= CacheConcurrencyStrategy.READ_ONLY, region = "trainees" )
+    @Cache(usage= READ_WRITE, region = "trainees" )
     private List<TraineeDAO> traineeDAO;
 
     @OneToOne(cascade = CascadeType.ALL, fetch= FetchType.LAZY)
-    @Cache(usage= CacheConcurrencyStrategy.READ_ONLY, region = "accounts" )
+    @Cache(usage= READ_WRITE, region = "accounts" )
     private AccountDAO accountDAO;
 
 

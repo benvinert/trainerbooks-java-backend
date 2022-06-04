@@ -15,11 +15,12 @@ import javax.persistence.Table;
 import java.time.ZonedDateTime;
 
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_ONLY;
+import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Cache(region = "users", usage = READ_ONLY)
+@Cache(region = "users", usage = READ_WRITE)
 @Cacheable
 @Entity(name="users")
 @Table(indexes = @Index(name = "email_index_unique", columnList = "email", unique = true))

@@ -32,7 +32,7 @@ public interface IMapDTOToDAOUser {
     }
 
     default String trimSpaces(String username) {
-        return StringUtils.isEmpty(username) ?  username : username.replaceAll("\\s+","");
+        return !StringUtils.hasLength(username) ?  username : username.replaceAll("\\s+","");
     }
 
 }
