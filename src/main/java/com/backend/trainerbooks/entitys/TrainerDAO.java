@@ -2,7 +2,6 @@ package com.backend.trainerbooks.entitys;
 
 import lombok.Data;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -41,7 +40,11 @@ public class TrainerDAO {
 
     @OneToMany(cascade = CascadeType.ALL, fetch= FetchType.LAZY)
     @Cache(usage= READ_WRITE, region = "trainees" )
-    private List<TraineeDAO> traineeDAO;
+    private List<TraineeDAO> traineeTransformations;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch= FetchType.LAZY)
+    @Cache(usage= READ_WRITE, region = "trainees" )
+    private List<TraineeDAO> trainees;
 
     @OneToOne(cascade = CascadeType.ALL, fetch= FetchType.LAZY)
     @Cache(usage= READ_WRITE, region = "accounts" )

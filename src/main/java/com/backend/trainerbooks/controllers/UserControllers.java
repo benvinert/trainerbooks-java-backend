@@ -29,6 +29,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.backend.trainerbooks.constants.FormConstants.ERROR;
+import static com.backend.trainerbooks.constants.UserConstants.HASH_LINK_ACTIVATION_KEY;
+import static com.backend.trainerbooks.constants.UserConstants.TOKEN;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -49,10 +53,17 @@ public class UserControllers {
         Map<String, String> responseMap = new HashMap<>();
         try {
             userService.save(userDAO);
-            responseMap.put("hashLink", Base64.getEncoder().encodeToString(userDAO.getId().toString().getBytes()));
+            responseMap.put(HASH_LINK_ACTIVATION_KEY, Base64.getEncoder().encodeToString(userDAO.getId().toString().getBytes()));
         } catch (Exception e) {
-            logger.error(String.format("User email with : %s  , ALREADY EXISTS", userDTO.getEmail()), e);
-            responseMap.put("emailAlreadyExists", "User Email already exists");
+            if(e.getMessage().contains("email")) {
+                logger.error(String.format("User email with : %s  , ALREADY EXISTS", userDTO.getEmail()), e);
+                responseMap.put(ERROR, "User Email already exists");
+            }
+            if(e.getMessage().contains("username")) {
+                logger.error(String.format("Username with : %s  , ALREADY EXISTS", userDTO.getUsername()), e);
+                responseMap.put(ERROR, "Username already exists");
+            }
+
         }
         return responseMap;
     }
@@ -70,11 +81,11 @@ public class UserControllers {
         Optional<UserDAO> userDAO = userService.findByEmail(userOAuthDTO.getEmail());
         Map<String, String> responseMap = new HashMap<>();
 
-        userDAO.ifPresentOrElse((user) -> responseMap.put("token", jwtUtils.generateToken(user)), () -> {
+        userDAO.ifPresentOrElse((user) -> responseMap.put(TOKEN, jwtUtils.generateToken(user)), () -> {
                     userOAuthDTO.setPassword(userOAuthDTO.getEmail());//Should find alternative
                     UserDAO userdao = mapDTOToDAOUser.map(userOAuthDTO);
                     userService.save(userdao);
-                    responseMap.put("token", jwtUtils.generateToken(userdao));
+                    responseMap.put(TOKEN, jwtUtils.generateToken(userdao));
                 }
         );
         return responseMap;

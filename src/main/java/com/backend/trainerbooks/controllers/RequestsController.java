@@ -15,7 +15,6 @@ import com.backend.trainerbooks.services.TraineeAccountService;
 import com.backend.trainerbooks.services.TrainerAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -78,7 +77,7 @@ public class RequestsController {
             Optional<TrainRequestDAO> trainRequestDAO = trainRequestService.findById(trainRequestDTO.getId());
 
             if(traineeDAO.isPresent() && trainerDAO != null && trainRequestDAO.isPresent()) {
-                trainerDAO.getTraineeDAO().add(traineeDAO.get());
+                trainerDAO.getTrainees().add(traineeDAO.get());
                 traineeDAO.get().setTrainerDAO(trainerDAO);
                 trainRequestDAO.get().setStatus(trainerChoosedStatus);
 

@@ -5,13 +5,14 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TrainerDTO extends AccountDTO{
+public class TrainerDTO extends AccountDTO implements Serializable {
     private String fullName;
     private String aboutProcess;
     private String moreAbout;
@@ -21,7 +22,8 @@ public class TrainerDTO extends AccountDTO{
     private String whoIs;
     private Long reviewsAmount;
     private Long clientsAmount;
+    private List<TraineeDTO> traineeTransformations;
 
-    private List<TraineeDTO> traineeDTOList;
+    private List<TraineeDTO> trainees;
 
 }
