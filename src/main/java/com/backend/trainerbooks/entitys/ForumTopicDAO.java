@@ -1,5 +1,6 @@
 package com.backend.trainerbooks.entitys;
 
+import com.backend.trainerbooks.DTOS.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -27,10 +29,17 @@ public class ForumTopicDAO {
 
     private String title;
     private ZonedDateTime createdDate;
-    @ManyToOne(cascade = CascadeType.ALL, fetch= FetchType.LAZY)
-//    @Cache(usage= READ_WRITE, region = "users" )
+
+    @OneToOne
+    private UserDAO byUser;
+    private Long numOfPosts;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch= FetchType.LAZY)
+    private List<ForumPostDAO> posts;
+
+    @ManyToOne(fetch= FetchType.LAZY)
     private ForumCategoryDAO forumCategory;
-    private Long posts;
+    private String subCategory;
 
     @OneToOne
     private ForumPostDAO lastPost;

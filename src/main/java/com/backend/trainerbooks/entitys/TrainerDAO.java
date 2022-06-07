@@ -42,7 +42,7 @@ public class TrainerDAO {
     @Cache(usage= READ_WRITE, region = "trainees" )
     private List<TraineeDAO> traineeTransformations;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch= FetchType.LAZY)
+    @OneToMany(fetch= FetchType.LAZY)
     @Cache(usage= READ_WRITE, region = "trainees" )
     private List<TraineeDAO> trainees;
 

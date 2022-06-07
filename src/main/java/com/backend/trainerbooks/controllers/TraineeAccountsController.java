@@ -7,8 +7,8 @@ import com.backend.trainerbooks.entitys.TraineeDAO;
 import com.backend.trainerbooks.entitys.UserDAO;
 import com.backend.trainerbooks.exceptions.NotFoundEntityException;
 import com.backend.trainerbooks.jwt.JWTUtils;
-import com.backend.trainerbooks.mappers.IMapDAOToDTOAccounts;
-import com.backend.trainerbooks.mappers.IMapDTOToDAOAccounts;
+import com.backend.trainerbooks.mappers.DAOToDTO.IMapDAOToDTOAccounts;
+import com.backend.trainerbooks.mappers.DTOToDAO.IMapDTOToDAOAccounts;
 import com.backend.trainerbooks.services.AccountService;
 import com.backend.trainerbooks.services.TraineeAccountService;
 import com.backend.trainerbooks.services.UserService;
@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +51,7 @@ public class TraineeAccountsController {
         Long userId = jwtUtils.getIdFromToken(request.getHeader(AUTHORIZATION.getValue()));
         TraineeDAO traineeDAO = null;
         if (userId != null) {
+            traineeDTO.setCreatedDate(ZonedDateTime.now());
             AccountDAO accountDAO = mapDTOToDAOAccounts.traineeDTOToAccountDAO(traineeDTO);
             Optional<UserDAO> userDAO = userService.findById(userId);
             accountDAO.setUserDAO(userDAO.orElseThrow());

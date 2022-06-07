@@ -24,6 +24,7 @@ public class ForumCategoryDAO {
     private String categoryImageURL;
     private Long topics;
     private Long posts;
+    private String url;
 
     @OneToOne
     private ForumTopicDAO lastTopic;

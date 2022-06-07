@@ -10,8 +10,8 @@ import com.backend.trainerbooks.entitys.TrainerDAO;
 import com.backend.trainerbooks.entitys.UserDAO;
 import com.backend.trainerbooks.exceptions.AuthException;
 import com.backend.trainerbooks.jwt.JWTUtils;
-import com.backend.trainerbooks.mappers.IMapDAOToDTOAccounts;
-import com.backend.trainerbooks.mappers.IMapDTOToDAOAccounts;
+import com.backend.trainerbooks.mappers.DAOToDTO.IMapDAOToDTOAccounts;
+import com.backend.trainerbooks.mappers.DTOToDAO.IMapDTOToDAOAccounts;
 import com.backend.trainerbooks.services.AccountService;
 import com.backend.trainerbooks.services.TrainerAccountService;
 import com.backend.trainerbooks.services.UserService;
@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -56,6 +57,7 @@ public class TrainerAccountsController {
         Long userId = jwtUtils.getIdFromToken(request.getHeader(AUTHORIZATION.getValue()));
         TrainerDAO trainerDAO = null;
         if (userId != null) {
+            trainerDTO.setCreatedDate(ZonedDateTime.now());
             AccountDAO accountDAO = mapDTOToDAOAccounts.trainerDTOToAccountDAO(trainerDTO);
             Optional<UserDAO> userDAO = userService.findById(userId);
             accountDAO.setUserDAO(userDAO.orElseThrow());

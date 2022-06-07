@@ -1,6 +1,5 @@
 package com.backend.trainerbooks.DTOS;
 
-import com.backend.trainerbooks.entitys.ForumTopicDAO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -14,6 +13,6 @@ public class ForumCategoryDTO {
     private String categoryImageURL;
     private Long topics;
     private Long posts;
-
-    private ForumTopicDAO lastTopic;
+    private String url;
+    private ForumTopicDTO lastTopic;
 }

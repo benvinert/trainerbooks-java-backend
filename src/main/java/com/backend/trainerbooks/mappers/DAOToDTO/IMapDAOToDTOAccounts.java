@@ -1,4 +1,4 @@
-package com.backend.trainerbooks.mappers;
+package com.backend.trainerbooks.mappers.DAOToDTO;
 
 import com.backend.trainerbooks.DTOS.ContactsDTO;
 import com.backend.trainerbooks.DTOS.TraineeDTO;

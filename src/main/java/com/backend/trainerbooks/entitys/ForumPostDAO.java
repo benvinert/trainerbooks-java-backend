@@ -27,6 +27,9 @@ public class ForumPostDAO {
     private String postText;
 
     @OneToOne
+    private UserDAO byUser;
+
+    @OneToOne
     private ForumPostDAO quote;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch= FetchType.LAZY)
