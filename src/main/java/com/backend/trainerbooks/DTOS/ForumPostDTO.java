@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.ZonedDateTime;
+
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
@@ -13,6 +15,6 @@ public class ForumPostDTO {
 
     private Long likes;
     private String postText;
-    private ForumPostDTO quote;
-    private ForumTopicDTO forumTopic;
+    private Long postQuoteId;
+    private ZonedDateTime createdDate;
 }

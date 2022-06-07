@@ -3,7 +3,10 @@ package com.backend.trainerbooks.entitys;
 import com.backend.trainerbooks.DTOS.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -17,7 +20,8 @@ import javax.persistence.OneToOne;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "forum_topics")
@@ -34,13 +38,16 @@ public class ForumTopicDAO {
     private UserDAO byUser;
     private Long numOfPosts;
 
+    private String content;
+
     @OneToMany(cascade = CascadeType.ALL, fetch= FetchType.LAZY)
     private List<ForumPostDAO> posts;
 
-    @ManyToOne(fetch= FetchType.LAZY)
-    private ForumCategoryDAO forumCategory;
-    private String subCategory;
+    private Long categoryId;
+    private String tags;
 
     @OneToOne
     private ForumPostDAO lastPost;
+    private Long likes;
+
 }

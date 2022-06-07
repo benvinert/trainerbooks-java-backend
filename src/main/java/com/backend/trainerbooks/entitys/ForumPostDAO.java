@@ -1,19 +1,19 @@
 package com.backend.trainerbooks.entitys;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import java.time.ZonedDateTime;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "forum_posts")
@@ -25,15 +25,11 @@ public class ForumPostDAO {
 
     private Long likes;
     private String postText;
+    private ZonedDateTime createdDate;
 
     @OneToOne
     private UserDAO byUser;
-
-    @OneToOne
-    private ForumPostDAO quote;
-
-    @ManyToOne(cascade = CascadeType.ALL, fetch= FetchType.LAZY)
-    private ForumTopicDAO forumTopic;
+    private Long postQuoteId;
 
 
 }

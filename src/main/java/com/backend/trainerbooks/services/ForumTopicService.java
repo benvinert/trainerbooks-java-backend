@@ -15,8 +15,8 @@ public class ForumTopicService {
 
     private final ForumTopicRepository forumTopicRepository;
 
-    public List<ForumTopicDAO> findAllForumTopicsByUrl(String url) {
-        return forumTopicRepository.findAllByForumCategoryUrl(url);
+    public List<ForumTopicDAO> findAllForumTopicsByCategoryIdAndOrderByDate(Long id) {
+        return forumTopicRepository.findAllByCategoryIdOrderByCreatedDateDesc(id);
     }
 
     public ForumTopicDAO save(ForumTopicDAO forumTopicDAO) {

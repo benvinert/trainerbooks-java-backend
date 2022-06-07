@@ -2,7 +2,9 @@ package com.backend.trainerbooks.entitys;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Cache;
 
 import javax.persistence.Cacheable;
@@ -16,7 +18,8 @@ import java.time.ZonedDateTime;
 
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Cache(region = "users", usage = READ_WRITE)

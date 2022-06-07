@@ -7,11 +7,7 @@ import java.util.regex.Pattern;
 
 @Component
 public class ValidationUtils {
-    public static final String regex = "((http|https)://)(www.)?"
-            + "[a-zA-Z0-9@:%._\\+~#?&//=]"
-            + "{2,256}\\.[a-z]"
-            + "{2,6}\\b([-a-zA-Z0-9@:%"
-            + "._\\+~#?&//=]*)";
+    public static final String regex = "(?!\\S+youtube\\.com)((?<!\\S)(((f|ht){1}tp[s]?:\\/\\/|(?<!\\S)www\\.)[-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]+))\n";
 
     public boolean isContainsURL(String url) {
         Pattern p = Pattern.compile(regex);

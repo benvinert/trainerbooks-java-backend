@@ -1,7 +1,5 @@
 package com.backend.trainerbooks.DTOS;
 
-import com.backend.trainerbooks.entitys.ForumCategoryDAO;
-import com.backend.trainerbooks.entitys.ForumPostDAO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -23,15 +21,16 @@ public class ForumTopicDTO {
     private ZonedDateTime createdDate;
 
     private UserDTO byUser;
+    private String content;
     private Long numOfPosts;
-    @NotEmpty
     private List<ForumPostDTO> posts;
     @NotNull
-    private ForumCategoryDTO forumCategory;
+    private Long categoryId;
 
-    @NotBlank
-    private String subCategory;
+    @NotEmpty
+    private List<String> tags;
 
     @OneToOne
     private ForumPostDTO lastPost;
+    private Long likes;
 }
