@@ -4,7 +4,6 @@ import com.backend.trainerbooks.DTOS.ForumCategoryDTO;
 import com.backend.trainerbooks.DTOS.ForumTopicDTO;
 import com.backend.trainerbooks.annotations.SecuredEndPoint;
 import com.backend.trainerbooks.entitys.ForumCategoryDAO;
-import com.backend.trainerbooks.entitys.ForumPostDAO;
 import com.backend.trainerbooks.entitys.ForumTopicDAO;
 import com.backend.trainerbooks.entitys.UserDAO;
 import com.backend.trainerbooks.enums.ForumCategoryEnum;
@@ -17,6 +16,8 @@ import com.backend.trainerbooks.services.ForumTopicService;
 import com.backend.trainerbooks.services.UserService;
 import com.backend.trainerbooks.utils.ValidationUtils;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +30,7 @@ import javax.validation.Valid;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,6 +41,7 @@ import static com.backend.trainerbooks.enums.JWTEnum.AUTHORIZATION;
 @RequiredArgsConstructor
 @RequestMapping("/forum")
 public class ForumController {
+    Logger logger = LoggerFactory.getLogger(ForumController.class);
 
     private final IMapDTOToDAOForum mapDTOToDAOForum;
     private final IMapDAOToDTOForum mapDAOToDTOForum;
@@ -55,10 +58,20 @@ public class ForumController {
         return mapDAOToDTOForum.map(forumCategoryDAOS);
     }
 
-    @GetMapping("/get-all-topics-by-url/{categoryUrl}")
-    public Map<String, Object> getAllTopicsByUrl(@PathVariable String categoryUrl) {
+    @GetMapping("/get-all-topics-by-category-url/{categoryUrl}")
+    public Map<String, Object> getAllTopicsByUrl(@PathVariable String categoryUrl,String tag) {
         ForumCategoryDAO forumCategoryDAO = forumCategoryService.findByUrl(categoryUrl);
-        List<ForumTopicDAO> forumTopicDAOS = forumTopicService.findAllForumTopicsByCategoryIdAndOrderByDate(forumCategoryDAO.getId());
+        List<ForumTopicDAO> forumTopicDAOS = new LinkedList<>();
+        try{
+            if(tag != null) {
+                forumTopicDAOS = forumTopicService.findAllForumTopicsByCategoryIdAndTagContainsOrderByDate(forumCategoryDAO.getId(),tag.toLowerCase());
+            } else {
+                forumTopicDAOS = forumTopicService.findAllForumTopicsByCategoryIdAndOrderByDate(forumCategoryDAO.getId());
+            }
+        }catch (Exception e) {
+            logger.error("Error in findForumTopics " ,e);
+        }
+
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("topics", mapDAOToDTOForum.mapDAOToDTOTopic(forumTopicDAOS));
         responseMap.put("category", mapDAOToDTOForum.map(forumCategoryDAO));

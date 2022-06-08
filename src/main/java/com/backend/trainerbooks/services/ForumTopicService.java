@@ -19,6 +19,10 @@ public class ForumTopicService {
         return forumTopicRepository.findAllByCategoryIdOrderByCreatedDateDesc(id);
     }
 
+    public List<ForumTopicDAO> findAllForumTopicsByCategoryIdAndTagContainsOrderByDate(Long id,String tag) {
+        return forumTopicRepository.findAllTopicsByCategoryIdAndTag(id,"%" +tag + "%");
+    }
+
     public ForumTopicDAO save(ForumTopicDAO forumTopicDAO) {
         return forumTopicRepository.save(forumTopicDAO);
     }
