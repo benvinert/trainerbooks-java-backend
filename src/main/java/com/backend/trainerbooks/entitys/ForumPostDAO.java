@@ -30,6 +30,7 @@ public class ForumPostDAO {
     @OneToOne
     private UserDAO byUser;
     private Long postQuoteId;
+    private Long topicId;
 
 
 }

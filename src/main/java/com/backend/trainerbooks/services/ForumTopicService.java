@@ -1,13 +1,12 @@
 package com.backend.trainerbooks.services;
 
-import com.backend.trainerbooks.entitys.ForumPostDAO;
 import com.backend.trainerbooks.entitys.ForumTopicDAO;
-import com.backend.trainerbooks.repositorys.ForumPostRepository;
 import com.backend.trainerbooks.repositorys.ForumTopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,5 +24,9 @@ public class ForumTopicService {
 
     public ForumTopicDAO save(ForumTopicDAO forumTopicDAO) {
         return forumTopicRepository.save(forumTopicDAO);
+    }
+
+    public Optional<ForumTopicDAO> findByTopicId(Long id) {
+        return forumTopicRepository.findById(id);
     }
 }

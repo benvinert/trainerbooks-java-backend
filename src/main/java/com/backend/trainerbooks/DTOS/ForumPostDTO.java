@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import java.time.ZonedDateTime;
 
 @AllArgsConstructor
@@ -12,9 +13,11 @@ import java.time.ZonedDateTime;
 public class ForumPostDTO {
 
     private Long id;
-
+    private UserDTO byUser;
     private Long likes;
+    @NotBlank
     private String postText;
     private Long postQuoteId;
     private ZonedDateTime createdDate;
+    private Long topicId;
 }
