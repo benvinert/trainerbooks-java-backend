@@ -17,7 +17,7 @@ public interface IMapDTOToDAOForum {
     @Mapping(target = "tags", expression = "java(getTagsAsList(forumTopicDTO))")
     ForumTopicDAO map(ForumTopicDTO forumTopicDTO);
     List<ForumTopicDAO> map(List<ForumTopicDTO> forumTopicDTO);
-
+    @Mapping(target = "quotePost" , ignore = true)
     ForumPostDAO map(ForumPostDTO forumPostDTO);
     List<ForumPostDAO> mapForumPost(List<ForumPostDTO> forumPostDTOS);
 

@@ -1,6 +1,7 @@
 package com.backend.trainerbooks.services;
 
 import com.backend.trainerbooks.entitys.ForumTopicDAO;
+import com.backend.trainerbooks.enums.LikeEnum;
 import com.backend.trainerbooks.repositorys.ForumTopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

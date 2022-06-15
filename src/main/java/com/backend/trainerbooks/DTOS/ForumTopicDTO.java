@@ -3,7 +3,6 @@ package com.backend.trainerbooks.DTOS;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -30,7 +29,7 @@ public class ForumTopicDTO {
     @NotEmpty
     private List<String> tags;
 
-    @OneToOne
     private ForumPostDTO lastPost;
-    private Long likes;
+    private Long likesCounter;
+    private List<LikeDTO> usersLikes;
 }

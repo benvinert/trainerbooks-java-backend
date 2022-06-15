@@ -5,6 +5,8 @@ import com.backend.trainerbooks.repositorys.ForumPostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class ForumPostService {
@@ -13,5 +15,9 @@ public class ForumPostService {
 
     public ForumPostDAO save(ForumPostDAO forumPostDAO) {
         return forumPostRepository.save(forumPostDAO);
+    }
+
+    public Optional<ForumPostDAO> findByPostId(Long postId) {
+        return forumPostRepository.findById(postId);
     }
 }
