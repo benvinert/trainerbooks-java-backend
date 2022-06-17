@@ -35,7 +35,6 @@ public class ForumTopicDAO implements Likeable {
     @OneToOne
     private UserDAO byUser;
     private Long numOfPosts;
-
     private String content;
 
     @OneToMany(cascade = CascadeType.ALL, fetch= FetchType.LAZY)
@@ -49,4 +48,7 @@ public class ForumTopicDAO implements Likeable {
     private Long likesCounter;
     @ManyToMany(cascade = CascadeType.ALL,fetch= FetchType.LAZY)
     private List<LikeDAO> usersLikes;
+
+    @OneToMany(cascade = CascadeType.ALL,fetch= FetchType.LAZY)
+    private List<ForumFileDAO> topicFiles;
 }

@@ -25,4 +25,5 @@ public class ForumPostDTO {
 
     private Long likesCounter;
     private List<LikeDAO> usersLikes;
+    private List<ForumFileDTO> postFiles;
 }

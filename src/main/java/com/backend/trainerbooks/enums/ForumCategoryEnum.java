@@ -5,7 +5,8 @@ public enum ForumCategoryEnum {
     RECIPES(2),
     FITNESS_AND_EXERCISES(3),
     GETTING_STARTED(4),
-    CHALLENGES(5);
+    CHALLENGES(5),
+    MOTIVATION(6);
 
     private int value;
 
@@ -17,5 +18,8 @@ public enum ForumCategoryEnum {
         return value;
     }
 
+    public static ForumCategoryEnum getByValue(int enumVal) {
+        return ForumCategoryEnum.values()[ enumVal - 1];
+    }
 
 }

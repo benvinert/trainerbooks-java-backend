@@ -30,4 +30,7 @@ public class ForumCategoryDAO {
 
     @OneToOne
     private ForumTopicDAO lastTopic;
+
+    @OneToOne
+    private ForumPostDAO lastPost;
 }

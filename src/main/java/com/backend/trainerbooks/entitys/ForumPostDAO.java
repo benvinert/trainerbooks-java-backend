@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -39,6 +40,9 @@ public class ForumPostDAO implements Likeable {
     private Long likesCounter;
     @ManyToMany(cascade = CascadeType.ALL,fetch= FetchType.LAZY)
     private List<LikeDAO> usersLikes;
+
+    @OneToMany(cascade = CascadeType.ALL,fetch= FetchType.LAZY)
+    private List<ForumFileDAO> postFiles;
 
 
 }

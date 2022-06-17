@@ -15,4 +15,5 @@ public class ForumCategoryDTO {
     private Long posts;
     private String url;
     private ForumTopicDTO lastTopic;
+    private ForumPostDTO lastPost;
 }

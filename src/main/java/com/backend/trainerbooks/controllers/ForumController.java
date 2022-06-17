@@ -9,7 +9,6 @@ import com.backend.trainerbooks.entitys.ForumPostDAO;
 import com.backend.trainerbooks.entitys.ForumTopicDAO;
 import com.backend.trainerbooks.entitys.LikeDAO;
 import com.backend.trainerbooks.entitys.UserDAO;
-import com.backend.trainerbooks.enums.ForumCategoryEnum;
 import com.backend.trainerbooks.enums.LikeEnum;
 import com.backend.trainerbooks.exceptions.NotFoundEntityException;
 import com.backend.trainerbooks.jwt.JWTUtils;
@@ -18,9 +17,10 @@ import com.backend.trainerbooks.mappers.DTOToDAO.IMapDTOToDAOForum;
 import com.backend.trainerbooks.services.ForumCategoryService;
 import com.backend.trainerbooks.services.ForumPostService;
 import com.backend.trainerbooks.services.ForumTopicService;
+import com.backend.trainerbooks.services.NativeQueryService;
 import com.backend.trainerbooks.services.UserService;
+import com.backend.trainerbooks.utils.ForumUtils;
 import com.backend.trainerbooks.utils.LikeUtils;
-import com.backend.trainerbooks.utils.ValidationUtils;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
@@ -38,7 +38,6 @@ import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -62,9 +61,10 @@ public class ForumController {
     private final ForumTopicService forumTopicService;
     private final ForumPostService forumPostService;
     private final JWTUtils jwtUtils;
-    private final ValidationUtils validationUtils;
     private final UserService userService;
     private final LikeUtils likeUtils;
+    private final NativeQueryService nativeQueryService;
+    private final ForumUtils forumUtils;
 
     @GetMapping("/get-all-categories")
     public List<ForumCategoryDTO> findAllCategories() {
@@ -80,7 +80,7 @@ public class ForumController {
             if (tag != null) {
                 forumTopicDAOS = forumTopicService.findAllForumTopicsByCategoryIdAndTagContainsOrderByDate(forumCategoryDAO.getId(), tag.toLowerCase());
             } else {
-                forumTopicDAOS = forumTopicService.findAllForumTopicsByCategoryIdAndOrderByDate(forumCategoryDAO.getId());
+                forumTopicDAOS = forumTopicService.findAllForumTopicsByCategoryIdAndOrderLastPostCreatedDate(forumCategoryDAO.getId());
             }
         } catch (Exception e) {
             logger.error("Error in findForumTopics ", e);
@@ -102,11 +102,8 @@ public class ForumController {
     @PostMapping("/add-topic-by-category")
     public ForumTopicDTO addTopicByCategory(HttpServletRequest request, @RequestBody @Valid ForumTopicDTO forumTopicDTO) {
         Long userId = jwtUtils.getIdFromToken(request.getHeader(AUTHORIZATION.getValue()));
-        boolean isValidCategory = Arrays.stream(ForumCategoryEnum.values())
-                .anyMatch(eachEnum -> eachEnum.getValue() == forumTopicDTO.getCategoryId());
 
-        if (!validationUtils.isContainsURL(forumTopicDTO.getTitle()) &&
-                !validationUtils.isContainsURL(forumTopicDTO.getContent()) && isValidCategory) {
+        if (forumUtils.addTopicValidation(forumTopicDTO)) {
             Optional<UserDAO> userDAO = userService.findById(userId);
             if (userDAO.isPresent()) {
                 forumTopicDTO.setCreatedDate(ZonedDateTime.now());
@@ -125,6 +122,8 @@ public class ForumController {
                 });
 
             }
+        } else {
+            logger.warn(String.format("Cannot add topic because it's not valid with current forumTopicDTO : %s  , by userId: %s",forumTopicDTO,userId));
         }
         return forumTopicDTO;
     }
@@ -180,7 +179,16 @@ public class ForumController {
 
             //Add Post to Topic's posts
             forumTopicDAO.get().getPosts().add(forumPostDAO);
+            forumTopicDAO.get().setLastPost(forumPostDAO);
             forumTopicService.save(forumTopicDAO.get());
+
+            Optional<ForumCategoryDAO> forumCategoryDAO = forumCategoryService.findById(forumTopicDAO.get().getCategoryId());
+            forumCategoryDAO.orElseThrow(() -> {
+                logger.error(String.format("Not found forumCategoryDAO with id: %s", forumTopicDAO.get().getCategoryId().toString()));
+                return new NotFoundEntityException(String.format("Not found forumCategoryDAO with id: %s", forumTopicDAO.get().getCategoryId().toString()));
+            });
+            forumCategoryDAO.get().setLastPost(forumPostDAO);
+            forumCategoryService.save(forumCategoryDAO.get());
 
         }
         return forumPostDTO;
@@ -265,6 +273,11 @@ public class ForumController {
             }
         }
     return forumPostDTO;
+    }
+
+    @GetMapping("/get-hot-topics")
+    public Map<Integer, List<ForumTopicDTO>> getHotTopics(){
+        return nativeQueryService.getHotTopicsByCategory();
     }
 
 }

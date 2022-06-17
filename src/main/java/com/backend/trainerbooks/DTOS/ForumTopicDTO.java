@@ -32,4 +32,5 @@ public class ForumTopicDTO {
     private ForumPostDTO lastPost;
     private Long likesCounter;
     private List<LikeDTO> usersLikes;
+    private List<ForumFileDTO> topicFiles;
 }
