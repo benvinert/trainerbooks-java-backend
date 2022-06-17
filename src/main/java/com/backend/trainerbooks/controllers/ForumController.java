@@ -26,6 +26,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,6 +55,7 @@ import static com.backend.trainerbooks.enums.JWTEnum.AUTHORIZATION;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/forum")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ForumController {
     Logger logger = LoggerFactory.getLogger(ForumController.class);
 
@@ -72,15 +76,19 @@ public class ForumController {
         return mapDAOToDTOForum.map(forumCategoryDAOS);
     }
 
-    @GetMapping("/get-all-topics-by-category-url/{categoryUrl}")
-    public Map<String, Object> getAllTopicsByUrl(@PathVariable String categoryUrl, String tag) {
+    @GetMapping("/get-all-topics-by-category-url/{categoryUrl}/{page}/{size}")
+    public Map<String, Object> getAllTopicsByUrl(@PathVariable String categoryUrl, String tag,@PathVariable Integer page,@PathVariable Integer size) {
         ForumCategoryDAO forumCategoryDAO = forumCategoryService.findByUrl(categoryUrl);
         List<ForumTopicDAO> forumTopicDAOS = new LinkedList<>();
+        Pageable pageable = PageRequest.of(0,5);
+        if(page != null && size != null) {
+            pageable = PageRequest.of(page,size);
+        }
         try {
             if (tag != null) {
                 forumTopicDAOS = forumTopicService.findAllForumTopicsByCategoryIdAndTagContainsOrderByDate(forumCategoryDAO.getId(), tag.toLowerCase());
             } else {
-                forumTopicDAOS = forumTopicService.findAllForumTopicsByCategoryIdAndOrderLastPostCreatedDate(forumCategoryDAO.getId());
+                forumTopicDAOS = forumTopicService.findAllForumTopicsByCategoryIdAndOrderLastPostCreatedDate(forumCategoryDAO.getId(),pageable);
             }
         } catch (Exception e) {
             logger.error("Error in findForumTopics ", e);
@@ -112,6 +120,9 @@ public class ForumController {
                 forumTopicDAO.setNumOfPosts(0L);
                 forumTopicDAO.setLikesCounter(0L);
                 forumTopicDAO.setUsersLikes(new LinkedList<>());
+                ForumPostDAO forumPostDAO = new ForumPostDAO();
+                forumPostDAO.setCreatedDate(ZonedDateTime.now());
+                forumTopicDAO.setLastPost(forumPostDAO);
                 forumTopicService.save(forumTopicDAO);
                 Optional<ForumCategoryDAO> forumCategoryDAO = forumCategoryService.findById(forumTopicDTO.getCategoryId());
 

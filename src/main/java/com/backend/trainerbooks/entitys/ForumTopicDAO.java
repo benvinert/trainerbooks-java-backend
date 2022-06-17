@@ -43,7 +43,7 @@ public class ForumTopicDAO implements Likeable {
     private Long categoryId;
     private String tags;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private ForumPostDAO lastPost;
     private Long likesCounter;
     @ManyToMany(cascade = CascadeType.ALL,fetch= FetchType.LAZY)
