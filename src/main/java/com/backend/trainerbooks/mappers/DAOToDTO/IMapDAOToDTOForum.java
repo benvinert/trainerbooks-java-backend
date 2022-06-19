@@ -20,10 +20,13 @@ public interface IMapDAOToDTOForum {
     ForumPostDTO map(ForumPostDAO forumPostDAO);
     @Mapping(target = "tags", expression = "java(getTagsAsList(forumTopicDAO))")
     ForumTopicDTO map(ForumTopicDAO forumTopicDAO);
+    @Mapping(target = "posts",ignore = true)
     List<ForumTopicDTO> mapDAOToDTOTopic(List<ForumTopicDAO> forumTopicDAO);
 
     default List<String> getTagsAsList(ForumTopicDAO forumTopicDAO) {
         return List.of(forumTopicDAO.getTags().split(","));
     }
+
+    List<ForumPostDTO> mapDAOToDTOPost(List<ForumPostDAO> forumPostDAOS);
 
 }

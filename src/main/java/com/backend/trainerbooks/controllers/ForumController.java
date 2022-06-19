@@ -77,23 +77,22 @@ public class ForumController {
     }
 
     @GetMapping("/get-all-topics-by-category-url/{categoryUrl}/{page}/{size}")
-    public Map<String, Object> getAllTopicsByUrl(@PathVariable String categoryUrl, String tag,@PathVariable Integer page,@PathVariable Integer size) {
+    public Map<String, Object> getAllTopicsByUrl(@PathVariable String categoryUrl, String tag, @PathVariable Integer page, @PathVariable Integer size) {
         ForumCategoryDAO forumCategoryDAO = forumCategoryService.findByUrl(categoryUrl);
         List<ForumTopicDAO> forumTopicDAOS = new LinkedList<>();
-        Pageable pageable = PageRequest.of(0,5);
-        if(page != null && size != null) {
-            pageable = PageRequest.of(page,size);
+        Pageable pageable = PageRequest.of(0, 10);
+        if (page != null && size != null) {
+            pageable = PageRequest.of(page, size);
         }
         try {
             if (tag != null) {
-                forumTopicDAOS = forumTopicService.findAllForumTopicsByCategoryIdAndTagContainsOrderByDate(forumCategoryDAO.getId(), tag.toLowerCase());
+                forumTopicDAOS = forumTopicService.findAllForumTopicsByCategoryIdAndTagContainsOrderByDate(forumCategoryDAO.getId(), tag.toLowerCase(), pageable);
             } else {
-                forumTopicDAOS = forumTopicService.findAllForumTopicsByCategoryIdAndOrderLastPostCreatedDate(forumCategoryDAO.getId(),pageable);
+                forumTopicDAOS = forumTopicService.findAllForumTopicsByCategoryIdAndOrderLastPostCreatedDate(forumCategoryDAO.getId(), pageable);
             }
         } catch (Exception e) {
             logger.error("Error in findForumTopics ", e);
         }
-
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("topics", mapDAOToDTOForum.mapDAOToDTOTopic(forumTopicDAOS));
         responseMap.put("category", mapDAOToDTOForum.map(forumCategoryDAO));
@@ -134,19 +133,19 @@ public class ForumController {
 
             }
         } else {
-            logger.warn(String.format("Cannot add topic because it's not valid with current forumTopicDTO : %s  , by userId: %s",forumTopicDTO,userId));
+            logger.warn(String.format("Cannot add topic because it's not valid with current forumTopicDTO : %s  , by userId: %s", forumTopicDTO, userId));
         }
         return forumTopicDTO;
     }
 
 
-    @GetMapping("/get-topic-by-id/{topicId}")
+    @GetMapping("/get-topic-by-id-without-posts/{topicId}")
     public ForumTopicDTO getTopicById(@PathVariable String topicId) throws NotFoundEntityException {
         Optional<ForumTopicDAO> forumTopicDAO = forumTopicService.findByTopicId(Long.parseLong(topicId));
         ForumTopicDTO forumTopicDTO = null;
         if (forumTopicDAO.isPresent()) {
+            forumTopicDAO.get().setPosts(null);//Don't want to get all posts because performance
             forumTopicDTO = mapDAOToDTOForum.map(forumTopicDAO.get());
-            Collections.reverse(forumTopicDTO.getPosts());
         } else {
             logger.error(String.format("topic with topicId: %s , not found", topicId));
             throw new NotFoundEntityException(String.format("topic with topicId: %s , not found", topicId));
@@ -176,7 +175,7 @@ public class ForumController {
             forumPostDAO.setCreatedDate(ZonedDateTime.now());
             forumPostDAO.setTopicId(forumTopicDAO.get().getId());
             forumPostDAO.setByUser(userDAO.get());
-            if(forumPostDTO.getQuotePost() != null) {
+            if (forumPostDTO.getQuotePost() != null) {
                 ForumPostDAO quotePost = new ForumPostDAO();
                 quotePost.setPostText(forumPostDTO.getQuotePost().getPostText());
                 UserDAO quoteUserDAO = new UserDAO();
@@ -203,20 +202,6 @@ public class ForumController {
 
         }
         return forumPostDTO;
-    }
-
-    @GetMapping("/get-all-posts-by-topicid/{topicId}")
-    public List<ForumPostDTO> getAllPostsByTopicId(@PathVariable String topicId) throws NotFoundEntityException {
-        List<ForumPostDTO> forumPostDTOS = new LinkedList<>();
-        if (topicId != null) {
-            Optional<ForumTopicDAO> forumTopicDAO = forumTopicService.findByTopicId(Long.parseLong(topicId));
-            forumTopicDAO.orElseThrow(() -> new NotFoundEntityException(String.format("Topic Not found with Id : %s", topicId)));
-            ForumTopicDTO forumTopicDTO = mapDAOToDTOForum.map(forumTopicDAO.get());
-            Collections.reverse(forumTopicDTO.getPosts());
-            forumPostDTOS = forumTopicDTO.getPosts();
-
-        }
-        return forumPostDTOS;
     }
 
     @SecuredEndPoint
@@ -272,23 +257,32 @@ public class ForumController {
 
     @SecuredEndPoint
     @PutMapping("/update-post")
-    public ForumPostDTO updatePost(HttpServletRequest request,@RequestBody ForumPostDTO forumPostDTO) {
+    public ForumPostDTO updatePost(HttpServletRequest request, @RequestBody ForumPostDTO forumPostDTO) {
         Long userId = jwtUtils.getIdFromToken(request.getHeader(AUTHORIZATION.getValue()));
         Optional<ForumPostDAO> forumPostDAOOptional = forumPostService.findByPostId(forumPostDTO.getId());
-        if(forumPostDAOOptional.isPresent()) {
+        if (forumPostDAOOptional.isPresent()) {
             ForumPostDAO forumPostDAO = forumPostDAOOptional.get();
-            if(Objects.equals(forumPostDAO.getByUser().getId(), userId)) {
+            if (Objects.equals(forumPostDAO.getByUser().getId(), userId)) {
                 String safeHTMLText = Jsoup.clean(forumPostDTO.getPostText(), Safelist.basic());
                 forumPostDAO.setPostText(safeHTMLText);
                 forumPostService.save(forumPostDAO);
             }
         }
-    return forumPostDTO;
+        return forumPostDTO;
     }
 
     @GetMapping("/get-hot-topics")
-    public Map<Integer, List<ForumTopicDTO>> getHotTopics(){
+    public Map<Integer, List<ForumTopicDTO>> getHotTopics() {
         return nativeQueryService.getHotTopicsByCategory();
     }
 
+    @GetMapping("/get-posts-by-topicId/{topicId}/{page}/{size}")
+    public List<ForumPostDTO> getPostsByTopicId(@PathVariable Long topicId,@PathVariable Integer page, @PathVariable Integer size) {
+        List<ForumPostDTO> postDTOS = new LinkedList<>();
+        if(page != null && size != null && size < 50) {
+            List<ForumPostDAO> forumPostDAOS = forumPostService.findPostsByTopicId(topicId,PageRequest.of(page,size));
+                postDTOS = mapDAOToDTOForum.mapDAOToDTOPost(forumPostDAOS);
+        }
+        return postDTOS;
+    }
 }

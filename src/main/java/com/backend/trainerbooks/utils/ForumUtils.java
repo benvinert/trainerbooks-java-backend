@@ -19,7 +19,6 @@ public class ForumUtils {
 
         return !validationUtils.isContainsURL(forumTopicDTO.getTitle()) &&
                 !validationUtils.isContainsURL(forumTopicDTO.getContent()) &&
-                validationUtils.isWithoutSpecialCharacters(forumTopicDTO.getTitle()) &&
                 isValidCategory;
     }
 }

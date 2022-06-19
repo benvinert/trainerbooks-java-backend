@@ -19,8 +19,8 @@ public class ForumTopicService {
         return forumTopicRepository.findAllByCategoryIdOrderByLastPostCreatedDateDesc(id,pageable);
     }
 
-    public List<ForumTopicDAO> findAllForumTopicsByCategoryIdAndTagContainsOrderByDate(Long id,String tag) {
-        return forumTopicRepository.findAllTopicsByCategoryIdAndTagOrderByLastPostCreatedDateDesc(id,"%" + tag + "%");
+    public List<ForumTopicDAO> findAllForumTopicsByCategoryIdAndTagContainsOrderByDate(Long id,String tag,Pageable pageable) {
+        return forumTopicRepository.findAllTopicsByCategoryIdAndTagOrderByLastPostCreatedDateDesc(id,"%" + tag + "%",pageable);
     }
 
     public ForumTopicDAO save(ForumTopicDAO forumTopicDAO) {
