@@ -12,6 +12,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -39,6 +40,7 @@ public class ForumTopicDAO implements Likeable {
     private String content;
 
     @OneToMany(cascade = CascadeType.ALL, fetch= FetchType.LAZY)
+    @JoinColumn(name = "topic_id_dao" , referencedColumnName = "id")
     private List<ForumPostDAO> posts;
 
     private Long categoryId;
@@ -51,5 +53,6 @@ public class ForumTopicDAO implements Likeable {
     private List<LikeDAO> usersLikes;
 
     @OneToMany(cascade = CascadeType.ALL,fetch= FetchType.LAZY)
+    @JoinColumn(name = "topic_id" , referencedColumnName = "id")
     private List<ForumFileDAO> topicFiles;
 }

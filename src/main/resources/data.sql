@@ -4,3 +4,5 @@ INSERT IGNORE INTO forum_categories (id,category_imageurl,name,description,posts
 INSERT IGNORE INTO forum_categories (id,category_imageurl,name,description,posts,topics,url) VALUES (3,'Workout.jpg','Fitness And Exercises','basdsgsahsaha',0,0,'fitness-and-exercises');
 INSERT IGNORE INTO forum_categories (id,category_imageurl,name,description,posts,topics,url) VALUES (4,'GettingStarted.jpg','Getting Started','wewewew',0,0,'getting-started');
 INSERT IGNORE INTO forum_categories (id,category_imageurl,name,description,posts,topics,url) VALUES (5,'Challenges.jpg','Challenges','jhgjhgjhg',0,0,'challenges');
+INSERT IGNORE INTO forum_categories (id,category_imageurl,name,description,posts,topics,url) VALUES (6,'Motivation.jpg','Motivation','Motivation for sickunts',0,0,'motivation');
+

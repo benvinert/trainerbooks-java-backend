@@ -55,7 +55,6 @@ import static com.backend.trainerbooks.enums.JWTEnum.AUTHORIZATION;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/forum")
-@CrossOrigin(origins = "http://localhost:3000")
 public class ForumController {
     Logger logger = LoggerFactory.getLogger(ForumController.class);
 

@@ -40,7 +40,6 @@ import static com.backend.trainerbooks.enums.JWTEnum.AUTHORIZATION;
 @RestController
 @RequestMapping("/accounts")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
 public class TrainerAccountsController {
 
     private final JWTUtils jwtUtils;
@@ -81,9 +80,9 @@ public class TrainerAccountsController {
         return mapDAOToDTOAccounts.map(trainerDAOS);
     }
 
-    @GetMapping("/get-trainer-account/{accountId}")
-    public TrainerDTO getTrainerAccountById(HttpServletRequest request, @PathVariable String accountId) {
-        TrainerDAO trainerDAO = trainerAccountService.findTrainerAccountByTrainerId(Long.parseLong(accountId));
+    @GetMapping("/get-trainer-account/{trainerId}")
+    public TrainerDTO getTrainerAccountById(HttpServletRequest request, @PathVariable String trainerId) {
+        TrainerDAO trainerDAO = trainerAccountService.findTrainerAccountByTrainerId(Long.parseLong(trainerId));
         TrainerDTO trainerDTO = mapDAOToDTOAccounts.map(trainerDAO);
         return trainerDTO;
     }

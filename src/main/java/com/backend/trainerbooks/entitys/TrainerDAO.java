@@ -10,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.util.List;
@@ -44,6 +45,7 @@ public class TrainerDAO {
 
     @OneToMany(fetch= FetchType.LAZY)
     @Cache(usage= READ_WRITE, region = "trainees" )
+    @JoinColumn(name = "trainer_id" , referencedColumnName = "id")
     private List<TraineeDAO> trainees;
 
     @OneToOne(cascade = CascadeType.ALL, fetch= FetchType.LAZY)

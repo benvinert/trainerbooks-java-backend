@@ -35,7 +35,6 @@ import static com.backend.trainerbooks.enums.JWTEnum.AUTHORIZATION;
 @RestController
 @RequestMapping("/accounts")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
 public class TraineeAccountsController {
 
     private final JWTUtils jwtUtils;

@@ -29,5 +29,9 @@ public class ValidationUtils {
         return m.matches();
     }
 
+    public boolean EntityRelatedToUser(Long entityId,Long userTokenId ) {
+        return entityId.equals(userTokenId);
+    }
+
 
 }

@@ -35,7 +35,6 @@ import static com.backend.trainerbooks.constants.UserConstants.TOKEN;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
 public class UserControllers {
     Logger logger = LoggerFactory.getLogger(UserControllers.class);
     private final UserService userService;
